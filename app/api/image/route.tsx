@@ -1,5 +1,4 @@
-import { Vote } from "@/data/builder";
-import { ContractMetadata } from "@/data/contract";
+import { ContractMetadata, Vote } from "@/data/contract";
 import { ImageResponse } from "next/server";
 
 export interface ImageGenerationRequest {

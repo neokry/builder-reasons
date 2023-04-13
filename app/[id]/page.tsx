@@ -1,30 +1,37 @@
-import { getProposal } from "@/data/builder";
-import { getContractMetadata, getDaoAddresses } from "@/data/contract";
+import {
+  getContractMetadata,
+  getDaoAddresses,
+  getProposal,
+  getProposalVotes,
+} from "@/data/contract";
 import { PageProps } from "@/types/PageProps";
 import Image from "next/image";
-import { Address } from "viem";
+import { Address, Hex } from "viem";
 
 export default async function Create({ params }: PageProps) {
   const { id } = params;
   const [contract, propsalId] = (id as string).split("-");
 
-  const { token, metadata } = await getDaoAddresses({
+  const { token, metadata, governor } = await getDaoAddresses({
     address: contract as Address,
   });
-  const [contractMetadata, prop] = await Promise.all([
+  const [contractMetadata, prop, votes] = await Promise.all([
     getContractMetadata(token, metadata),
-    getProposal(propsalId as string),
+    getProposal(governor, propsalId as Hex),
+    getProposalVotes(governor, propsalId as Hex),
   ]);
+
+  const title = prop?.description.split("&&")[0];
 
   return (
     <div>
-      <div className="font-semibold ">{prop.title}</div>
+      <div className="font-semibold ">{title}</div>
       <div className="grid grid-cols-3 gap-6 mt-4 w-full">
-        {prop.votes
+        {votes
           .filter((x) => !!x.reason)
           .map((x) => {
             const data = encodeURIComponent(
-              JSON.stringify({ vote: x, contractMetadata, title: prop.title })
+              JSON.stringify({ vote: x, contractMetadata, title })
             );
             return (
               <div

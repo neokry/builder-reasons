@@ -1,11 +1,18 @@
 import { Address, Hex } from "viem";
-import { managerAbi, tokenAbi, metadataAbi } from "constants/abi";
+import { managerAbi, tokenAbi, metadataAbi, governorAbi } from "constants/abi";
 import client from "./client";
 import { PUBLIC_MANAGER_ADDRESS } from "@/constants/addresses";
 
 export interface ContractMetadata {
   name: string;
   contractImage: string;
+}
+
+export interface Vote {
+  voter?: `0x${string}` | undefined;
+  proposalId?: `0x${string}` | undefined;
+  support?: string | undefined;
+  reason?: string | undefined;
 }
 
 export const getDaoAddresses = async ({ address }: { address: Address }) => {
@@ -17,6 +24,37 @@ export const getDaoAddresses = async ({ address }: { address: Address }) => {
   });
 
   return { token: address, auction, metadata, treasury, governor };
+};
+
+export const getProposal = async (governor: Address, proposalId: Hex) => {
+  const filter = await client.createContractEventFilter({
+    abi: governorAbi,
+    address: governor,
+    eventName: "ProposalCreated",
+    fromBlock: 0n,
+  });
+
+  const logs = await client.getFilterLogs({ filter });
+  return logs.map((x) => x.args).find((x) => x.proposalId === proposalId);
+};
+
+export const getProposalVotes = async (governor: Address, proposalId: Hex) => {
+  const filter = await client.createContractEventFilter({
+    abi: governorAbi,
+    address: governor,
+    eventName: "VoteCast",
+    fromBlock: 0n,
+  });
+
+  const logs = await client.getFilterLogs({ filter });
+  return logs
+    .map((x) => x.args)
+    .filter((x) => x.proposalId === proposalId)
+    .map((x) => ({
+      ...x,
+      support: x.support.toString(),
+      weight: undefined,
+    }));
 };
 
 export const getContractMetadata = async (
