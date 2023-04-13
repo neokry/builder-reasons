@@ -26,6 +26,17 @@ export async function GET(request: Request) {
     `${IPFS_GATEWAY}/ipfs/`
   );
 
+  const getSupport = () => {
+    switch (vote.support) {
+      case "0":
+        return "Against";
+      case "1":
+        return "For";
+      case "2":
+        return "Abstain";
+    }
+  };
+
   return new ImageResponse(
     (
       <div
@@ -61,7 +72,12 @@ export async function GET(request: Request) {
         <h2 style={{ fontSize: 40, fontWeight: 800 }}>{title}</h2>
         <p style={{ fontSize: 30 }}>{vote.reason}</p>
         <p style={{ position: "absolute", fontSize: 40, bottom: 40, left: 40 }}>
-          {vote.voter.slice(0, 8)}...
+          {vote.voter?.slice(0, 8)}...
+        </p>
+        <p
+          style={{ position: "absolute", fontSize: 40, bottom: 40, right: 40 }}
+        >
+          {getSupport()}
         </p>
       </div>
     ),
