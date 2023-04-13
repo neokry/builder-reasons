@@ -7,7 +7,7 @@ export interface ImageGenerationRequest {
   title: string;
 }
 
-export const IPFS_GATEWAY =
+const IPFS_GATEWAY =
   process.env.NEXT_PUBLIC_IPFS_GATEWAY ||
   "https://ipfs.decentralized-content.com";
 
