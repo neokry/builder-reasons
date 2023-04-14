@@ -43,13 +43,8 @@ export const getProposal = async (
     toBlock: blockNumber,
   });
 
-  try {
-    const logs = await client.getFilterLogs({ filter });
-    return logs.map((x) => x.args).find((x) => x.proposalId === proposalId);
-  } catch (err) {
-    console.log("filter error 1", err);
-  }
-  return {};
+  const logs = await client.getFilterLogs({ filter });
+  return logs.map((x) => x.args).find((x) => x.proposalId === proposalId);
 };
 
 export const getProposalVotes = async (
@@ -65,21 +60,16 @@ export const getProposalVotes = async (
     toBlock: blockNumber,
   });
 
-  try {
-    const logs = await client.getFilterLogs({ filter });
+  const logs = await client.getFilterLogs({ filter });
 
-    return logs
-      .map((x) => x.args)
-      .filter((x) => x.proposalId === proposalId)
-      .map((x) => ({
-        ...x,
-        support: x.support.toString(),
-        weight: undefined,
-      }));
-  } catch (err) {
-    console.log("filter error 2");
-  }
-  return [];
+  return logs
+    .map((x) => x.args)
+    .filter((x) => x.proposalId === proposalId)
+    .map((x) => ({
+      ...x,
+      support: x.support.toString(),
+      weight: undefined,
+    }));
 };
 
 export const getContractMetadata = async (
