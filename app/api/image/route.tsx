@@ -1,4 +1,4 @@
-import { ContractMetadata, Vote } from "@/data/contract";
+import { ContractMetadata, Vote } from "@/data/eth";
 import { ImageResponse } from "next/server";
 
 export const runtime = "edge";
@@ -8,6 +8,18 @@ export interface ImageGenerationRequest {
   contractMetadata: ContractMetadata;
   title: string;
 }
+
+const ptRootRegular = fetch(
+  new URL("public/fonts/pt-root-ui_regular.ttf", import.meta.url)
+).then((res) => res.arrayBuffer());
+
+const ptRootMedium = fetch(
+  new URL("public/fonts/pt-root-ui_medium.ttf", import.meta.url)
+).then((res) => res.arrayBuffer());
+
+const ptRootBold = fetch(
+  new URL("public/fonts/pt-root-ui_bold.ttf", import.meta.url)
+).then((res) => res.arrayBuffer());
 
 const IPFS_GATEWAY =
   process.env.NEXT_PUBLIC_IPFS_GATEWAY ||
@@ -19,6 +31,9 @@ export async function GET(request: Request) {
 
   if (!rawData) return new Response(null, { status: 404 });
 
+  const [ptRootRegularData, ptRootMediumData, ptRootBoldData] =
+    await Promise.all([ptRootRegular, ptRootMedium, ptRootBold]);
+
   const { vote, title, contractMetadata } = JSON.parse(
     rawData
   ) as ImageGenerationRequest;
@@ -28,7 +43,10 @@ export async function GET(request: Request) {
     `${IPFS_GATEWAY}/ipfs/`
   );
 
-  console.log({ data: JSON.parse(rawData), image: fetchableContractImage });
+  const fetchableAvatar = vote.avatar?.replace(
+    "ipfs://",
+    `${IPFS_GATEWAY}/ipfs/`
+  );
 
   const getSupport = () => {
     switch (vote.support) {
@@ -40,6 +58,8 @@ export async function GET(request: Request) {
         return "Abstain";
     }
   };
+
+  const name = vote.ens ?? `${vote.voter?.slice(0, 8)}...`;
 
   return new ImageResponse(
     (
@@ -56,6 +76,7 @@ export async function GET(request: Request) {
           borderWidth: 1,
           borderColor: "#090909",
           borderRadius: 40,
+          fontFamily: "PT Root UI",
         }}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -75,9 +96,29 @@ export async function GET(request: Request) {
         </div>
         <h2 style={{ fontSize: 40, fontWeight: 800 }}>{title}</h2>
         <p style={{ fontSize: 30 }}>{vote.reason}</p>
-        <p style={{ position: "absolute", fontSize: 40, bottom: 40, left: 40 }}>
-          {vote.voter?.slice(0, 8)}...
-        </p>
+        <div
+          style={{
+            position: "absolute",
+            bottom: 40,
+            left: 40,
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {fetchableAvatar && (
+            <img
+              alt="user avatar"
+              style={{
+                height: 40,
+                width: 40,
+                borderRadius: 9999,
+                marginRight: 10,
+              }}
+              src={fetchableAvatar}
+            />
+          )}
+          <p style={{ fontSize: 40 }}>{name}</p>
+        </div>
         <p
           style={{ position: "absolute", fontSize: 40, bottom: 40, right: 40 }}
         >
@@ -85,6 +126,29 @@ export async function GET(request: Request) {
         </p>
       </div>
     ),
-    { height: 1000, width: 1000 }
+    {
+      height: 1000,
+      width: 1000,
+      fonts: [
+        {
+          name: "PT Root UI",
+          data: ptRootRegularData,
+          style: "normal",
+          weight: 400,
+        },
+        {
+          name: "PT Root UI",
+          data: ptRootMediumData,
+          style: "normal",
+          weight: 500,
+        },
+        {
+          name: "PT Root UI",
+          data: ptRootBoldData,
+          style: "normal",
+          weight: 700,
+        },
+      ],
+    }
   );
 }

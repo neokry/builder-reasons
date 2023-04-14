@@ -4,7 +4,7 @@ import {
   getDaoAddresses,
   getProposal,
   getProposalVotes,
-} from "@/data/contract";
+} from "@/data/eth";
 import { PageProps } from "@/types/PageProps";
 import Image from "next/image";
 import { Address, Hex } from "viem";
@@ -25,7 +25,6 @@ export default async function Create({ params }: PageProps) {
     getProposal(governor, propsalId as Hex, blockNumber),
     getProposalVotes(governor, propsalId as Hex, blockNumber),
   ]);
-
   const title = prop?.description.split("&&")[0];
 
   return (
@@ -38,6 +37,7 @@ export default async function Create({ params }: PageProps) {
             const data = encodeURIComponent(
               JSON.stringify({ vote: x, contractMetadata, title })
             );
+
             return (
               <div
                 className="relative w-full h-full"
