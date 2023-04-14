@@ -28,6 +28,8 @@ export async function GET(request: Request) {
     `${IPFS_GATEWAY}/ipfs/`
   );
 
+  console.log({ data: JSON.parse(rawData), image: fetchableContractImage });
+
   const getSupport = () => {
     switch (vote.support) {
       case "0":
