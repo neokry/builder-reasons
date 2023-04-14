@@ -48,7 +48,6 @@ export default async function Create({ params }: PageProps) {
                   alt="vote"
                   fill
                   className="object-contain w-full"
-                  unoptimized
                   src={`/api/image?data=${data}`}
                 />
               </div>
