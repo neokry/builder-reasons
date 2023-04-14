@@ -8,7 +8,7 @@ export interface Vote {
   proposalId?: `0x${string}` | undefined;
   support?: string | undefined;
   reason?: string | undefined;
-  ens?: string;
+  ens?: string | null;
   avatar?: string;
 }
 

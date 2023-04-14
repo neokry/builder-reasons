@@ -2,7 +2,7 @@ import { ProposalInput } from "@/components/ProposalInput";
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex-col">
+    <main className="flex-col">
       <ProposalInput />
     </main>
   );

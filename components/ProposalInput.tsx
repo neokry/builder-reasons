@@ -15,9 +15,23 @@ export const ProposalInput = () => {
     return { propId, contract };
   }, [propLink]);
 
+  const link =
+    propId && contract ? (
+      <Link
+        href={`/${contract}-${propId}`}
+        className="bg-black text-white rounded-md py-2 mt-2 text-center"
+      >
+        Continue
+      </Link>
+    ) : (
+      <div className="bg-gray-500 text-white rounded-md py-2 mt-2 text-center">
+        Continue
+      </div>
+    );
+
   return (
     <div className="w-full flex items-center justify-around">
-      <div className="flex flex-col w-[400px] p-12">
+      <div className="flex flex-col w-full sm:w-[500px] p-4 sm:p-12">
         <div className="font-semibold">Proposal link</div>
         <input
           value={propLink}
@@ -25,12 +39,7 @@ export const ProposalInput = () => {
           onChange={(e) => setPropLink(e.target.value)}
           className="bg-gray-100 rounded-md py-2 px-4 mt-1 focus:outline-none"
         />
-        <Link
-          href={`/${contract}-${propId}`}
-          className="bg-black text-white rounded-md py-2 mt-2 text-center"
-        >
-          Continue
-        </Link>
+        {link}
       </div>
     </div>
   );

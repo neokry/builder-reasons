@@ -8,6 +8,12 @@ import {
 import { PageProps } from "@/types/PageProps";
 import Image from "next/image";
 import { Address, Hex } from "viem";
+import { ImageGenerationRequest } from "../api/image/route";
+import { ReasonList } from "@/components/ReasonList";
+
+const IPFS_GATEWAY =
+  process.env.NEXT_PUBLIC_IPFS_GATEWAY ||
+  "https://ipfs.decentralized-content.com";
 
 export default async function Create({ params }: PageProps) {
   const { id } = params;
@@ -25,36 +31,46 @@ export default async function Create({ params }: PageProps) {
     getProposal(governor, propsalId as Hex, blockNumber),
     getProposalVotes(governor, propsalId as Hex, blockNumber),
   ]);
-  const title = prop?.description.split("&&")[0];
+
+  if (!prop) return null;
+
+  const fetchableContractImage = contractMetadata.contractImage.replace(
+    "ipfs://",
+    `${IPFS_GATEWAY}/ipfs/`
+  );
+
+  const title = prop.description.split("&&")[0];
 
   return (
     <div>
-      <div className="font-semibold ">{title}</div>
-      <div className="grid grid-cols-3 gap-6 mt-4 w-full">
-        {votes
-          .filter((x) => !!x.reason)
-          .map((x) => {
-            const data = encodeURIComponent(
-              JSON.stringify({ vote: x, contractMetadata, title })
-            );
-
-            return (
-              <div
-                className="relative w-full h-full"
-                style={{ height: 400 }}
-                key={x.voter}
-              >
+      <div className="flex items-center justify-around">
+        <div className="flex flex-col items-center">
+          <div className="text-center mt-4">
+            <div className="flex items-center justify-center">
+              <div className="relative mr-1 w-6 h-6 sm:h-8 sm:w-8">
                 <Image
-                  alt="vote"
+                  alt="contract image"
+                  className="object-contain rounded-full"
                   fill
-                  className="object-contain w-full"
                   unoptimized
-                  src={`/api/image?data=${data}`}
+                  src={fetchableContractImage}
                 />
               </div>
-            );
-          })}
+              <div className="text-2xl sm:text-3xl font-bold">
+                {contractMetadata.name}
+              </div>
+            </div>
+            <div className="text-lg max-w-screen sm:max-w-xl sm:text-lg bg-gray-100 mt-4 border rounded-2xl p-1 px-6">
+              {title}
+            </div>
+          </div>
+        </div>
       </div>
+      <ReasonList
+        title={title}
+        contractMetadata={contractMetadata}
+        votes={votes}
+      />
     </div>
   );
 }
