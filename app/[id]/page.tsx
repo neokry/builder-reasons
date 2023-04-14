@@ -49,7 +49,7 @@ export default async function Create({ params }: PageProps) {
                   fill
                   className="object-contain w-full"
                   unoptimized
-                  src={`/api/image/${data}`}
+                  src={`/api/image?data=${data}`}
                 />
               </div>
             );
