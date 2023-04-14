@@ -20,7 +20,7 @@ export async function GET(request: Request) {
   if (!rawData) return new Response(null, { status: 404 });
 
   const { vote, title, contractMetadata } = JSON.parse(
-    decodeURIComponent(rawData)
+    rawData
   ) as ImageGenerationRequest;
 
   const fetchableContractImage = contractMetadata.contractImage.replace(
