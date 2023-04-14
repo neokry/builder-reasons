@@ -43,11 +43,6 @@ export async function GET(request: Request) {
     `${IPFS_GATEWAY}/ipfs/`
   );
 
-  const fetchableAvatar = vote.avatar?.replace(
-    "ipfs://",
-    `${IPFS_GATEWAY}/ipfs/`
-  );
-
   const getSupport = () => {
     switch (vote.support) {
       case "0":
@@ -105,18 +100,6 @@ export async function GET(request: Request) {
             alignItems: "center",
           }}
         >
-          {fetchableAvatar && (
-            <img
-              alt="user avatar"
-              style={{
-                height: 40,
-                width: 40,
-                borderRadius: 9999,
-                marginRight: 10,
-              }}
-              src={fetchableAvatar}
-            />
-          )}
           <p style={{ fontSize: 40 }}>{name}</p>
         </div>
         <p
