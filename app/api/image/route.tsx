@@ -1,6 +1,8 @@
 import { ContractMetadata, Vote } from "@/data/eth";
 import { ImageResponse } from "next/server";
 
+export const runtime = "edge";
+
 export interface ImageGenerationRequest {
   vote: Vote;
   contractMetadata: ContractMetadata;
