@@ -15,6 +15,10 @@ export interface Vote {
   reason?: string | undefined;
 }
 
+export const getBlockNumber = () => {
+  return client.getBlockNumber();
+};
+
 export const getDaoAddresses = async ({ address }: { address: Address }) => {
   const [metadata, auction, treasury, governor] = await client.readContract({
     address: PUBLIC_MANAGER_ADDRESS,
@@ -26,35 +30,56 @@ export const getDaoAddresses = async ({ address }: { address: Address }) => {
   return { token: address, auction, metadata, treasury, governor };
 };
 
-export const getProposal = async (governor: Address, proposalId: Hex) => {
+export const getProposal = async (
+  governor: Address,
+  proposalId: Hex,
+  blockNumber: bigint
+) => {
   const filter = await client.createContractEventFilter({
     abi: governorAbi,
     address: governor,
     eventName: "ProposalCreated",
     fromBlock: 0n,
+    toBlock: blockNumber,
   });
 
-  const logs = await client.getFilterLogs({ filter });
-  return logs.map((x) => x.args).find((x) => x.proposalId === proposalId);
+  try {
+    const logs = await client.getFilterLogs({ filter });
+    return logs.map((x) => x.args).find((x) => x.proposalId === proposalId);
+  } catch (err) {
+    console.log("filter error 1", err);
+  }
+  return {};
 };
 
-export const getProposalVotes = async (governor: Address, proposalId: Hex) => {
+export const getProposalVotes = async (
+  governor: Address,
+  proposalId: Hex,
+  blockNumber: bigint
+) => {
   const filter = await client.createContractEventFilter({
     abi: governorAbi,
     address: governor,
     eventName: "VoteCast",
     fromBlock: 0n,
+    toBlock: blockNumber,
   });
 
-  const logs = await client.getFilterLogs({ filter });
-  return logs
-    .map((x) => x.args)
-    .filter((x) => x.proposalId === proposalId)
-    .map((x) => ({
-      ...x,
-      support: x.support.toString(),
-      weight: undefined,
-    }));
+  try {
+    const logs = await client.getFilterLogs({ filter });
+
+    return logs
+      .map((x) => x.args)
+      .filter((x) => x.proposalId === proposalId)
+      .map((x) => ({
+        ...x,
+        support: x.support.toString(),
+        weight: undefined,
+      }));
+  } catch (err) {
+    console.log("filter error 2");
+  }
+  return [];
 };
 
 export const getContractMetadata = async (

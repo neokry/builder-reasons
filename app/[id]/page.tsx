@@ -1,4 +1,5 @@
 import {
+  getBlockNumber,
   getContractMetadata,
   getDaoAddresses,
   getProposal,
@@ -12,13 +13,17 @@ export default async function Create({ params }: PageProps) {
   const { id } = params;
   const [contract, propsalId] = (id as string).split("-");
 
-  const { token, metadata, governor } = await getDaoAddresses({
-    address: contract as Address,
-  });
+  const [{ token, metadata, governor }, blockNumber] = await Promise.all([
+    getDaoAddresses({
+      address: contract as Address,
+    }),
+    getBlockNumber(),
+  ]);
+
   const [contractMetadata, prop, votes] = await Promise.all([
     getContractMetadata(token, metadata),
-    getProposal(governor, propsalId as Hex),
-    getProposalVotes(governor, propsalId as Hex),
+    getProposal(governor, propsalId as Hex, blockNumber),
+    getProposalVotes(governor, propsalId as Hex, blockNumber),
   ]);
 
   const title = prop?.description.split("&&")[0];
