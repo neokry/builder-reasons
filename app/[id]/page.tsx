@@ -26,6 +26,8 @@ export default async function Create({ params }: PageProps) {
     getBlockNumber(),
   ]);
 
+  if (!token || !metadata || !governor) return null;
+
   const [contractMetadata, prop, votes] = await Promise.all([
     getContractMetadata(token, metadata),
     getProposal(governor, propsalId as Hex, blockNumber),
