@@ -12,34 +12,24 @@ export interface Vote {
   avatar?: string;
 }
 
-export const getProposal = async (
-  governor: Address,
-  proposalId: Hex,
-  blockNumber: bigint
-) => {
+export const getProposal = async (governor: Address, proposalId: Hex) => {
   const filter = await client.createContractEventFilter({
     abi: governorAbi,
     address: governor,
     eventName: "ProposalCreated",
     fromBlock: 0n,
-    toBlock: blockNumber,
   });
 
   const logs = await client.getFilterLogs({ filter });
   return logs.map((x) => x.args).find((x) => x.proposalId === proposalId);
 };
 
-export const getProposalVotes = async (
-  governor: Address,
-  proposalId: Hex,
-  blockNumber: bigint
-) => {
+export const getProposalVotes = async (governor: Address, proposalId: Hex) => {
   const filter = await client.createContractEventFilter({
     abi: governorAbi,
     address: governor,
     eventName: "VoteCast",
     fromBlock: 0n,
-    toBlock: blockNumber,
   });
 
   const logs = await client.getFilterLogs({ filter });

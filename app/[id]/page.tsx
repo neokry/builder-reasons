@@ -19,19 +19,16 @@ export default async function Create({ params }: PageProps) {
   const { id } = params;
   const [contract, propsalId] = (id as string).split("-");
 
-  const [{ token, metadata, governor }, blockNumber] = await Promise.all([
-    getDaoAddresses({
-      address: contract as Address,
-    }),
-    getBlockNumber(),
-  ]);
+  const { token, metadata, governor } = await getDaoAddresses({
+    address: contract as Address,
+  });
 
   if (!token || !metadata || !governor) return null;
 
   const [contractMetadata, prop, votes] = await Promise.all([
     getContractMetadata(token, metadata),
-    getProposal(governor, propsalId as Hex, blockNumber),
-    getProposalVotes(governor, propsalId as Hex, blockNumber),
+    getProposal(governor, propsalId as Hex),
+    getProposalVotes(governor, propsalId as Hex),
   ]);
 
   if (!prop) return null;
