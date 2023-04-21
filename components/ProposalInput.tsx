@@ -19,7 +19,7 @@ export const ProposalInput = () => {
   const link =
     propId && contract ? (
       <Link
-        href={`/${contract}-${propId}`}
+        href={`/prop/${contract}-${propId}`}
         className="bg-black text-white rounded-md py-2 mt-2 text-center"
       >
         Continue

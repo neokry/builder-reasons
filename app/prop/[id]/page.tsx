@@ -1,5 +1,4 @@
 import {
-  getBlockNumber,
   getContractMetadata,
   getDaoAddresses,
   getProposal,
@@ -8,7 +7,6 @@ import {
 import { PageProps } from "@/types/PageProps";
 import Image from "next/image";
 import { Address, Hex } from "viem";
-import { ImageGenerationRequest } from "../api/image/route";
 import { ReasonList } from "@/components/ReasonList";
 
 const IPFS_GATEWAY =
