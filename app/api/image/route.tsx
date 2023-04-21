@@ -1,4 +1,5 @@
-import { ContractMetadata, Vote } from "@/data/eth";
+import { ContractMetadata } from "@/data/viem";
+import { Vote } from "@/data/wagmi";
 import { ImageResponse } from "next/server";
 
 export const runtime = "edge";

@@ -1,9 +1,5 @@
-import {
-  getContractMetadata,
-  getDaoAddresses,
-  getProposal,
-  getProposalVotes,
-} from "@/data/eth";
+import { getProposal, getProposalVotes } from "@/data/wagmi";
+import { getContractMetadata, getDaoAddresses } from "@/data/viem";
 import { PageProps } from "@/types/PageProps";
 import Image from "next/image";
 import { Address, Hex } from "viem";

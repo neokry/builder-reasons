@@ -1,7 +1,8 @@
 "use client";
 
 import { ImageGenerationRequest } from "@/app/api/image/route";
-import { ContractMetadata, Vote } from "@/data/eth";
+import { ContractMetadata } from "@/data/viem";
+import { Vote } from "@/data/wagmi";
 import Image from "next/image";
 import ModalWrapper from "./ModalWraper";
 import { useState } from "react";
