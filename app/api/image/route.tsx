@@ -90,7 +90,15 @@ export async function GET(request: Request) {
           </h1>
         </div>
         <h2 style={{ fontSize: 40, fontWeight: 800 }}>{title}</h2>
-        <p style={{ fontSize: 30 }}>{vote.reason}</p>
+        <p
+          style={{
+            fontSize: 30,
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+          }}
+        >
+          {vote.reason}
+        </p>
         <div
           style={{
             position: "absolute",
