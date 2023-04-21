@@ -61,7 +61,15 @@ const Preview: React.FC<
       className="break-inside-avoid break-after-column border w-full text-left p-4 rounded-lg hover:scale-105 transition-transform"
       key={vote.voter}
     >
-      <div className="text-sm">{vote.reason}</div>
+      <div
+        className="text-sm"
+        style={{
+          whiteSpace: "pre-wrap",
+          wordBreak: "break-word",
+        }}
+      >
+        {vote.reason}
+      </div>
       <div className="flex items-center justify-between mt-6">
         <div>{name}</div>
         <div>{getSupport()}</div>

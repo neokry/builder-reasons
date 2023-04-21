@@ -7,29 +7,17 @@ import { getEnsName } from "../viem";
 
 export type Proposal = {
   proposalId: `0x${string}`;
-  targets: `0x${string}`[];
-  values: number[];
-  calldatas: `0x${string}`[];
   description: string;
-  descriptionHash: `0x${string}`;
-  proposal: ProposalDetails;
-  state: number;
 };
 
-export type ProposalDetails = {
-  proposer: `0x${string}`;
-  timeCreated: number;
-  againstVotes: number;
-  forVotes: number;
-  abstainVotes: number;
-  voteStart: number;
-  voteEnd: number;
-  proposalThreshold: number;
-  quorumVotes: number;
-  executed: boolean;
-  canceled: boolean;
-  vetoed: boolean;
-};
+export interface Vote {
+  voter?: `0x${string}` | undefined;
+  proposalId?: `0x${string}` | undefined;
+  support?: string | undefined;
+  reason?: string | undefined;
+  ens?: string | null;
+  avatar?: string;
+}
 
 export const getUserVotes = async ({
   address,
@@ -48,16 +36,10 @@ export const getUserVotes = async ({
   return governor.getVotes(user, BigNumber.from(timestamp));
 };
 
-export interface Vote {
-  voter?: `0x${string}` | undefined;
-  proposalId?: `0x${string}` | undefined;
-  support?: string | undefined;
-  reason?: string | undefined;
-  ens?: string | null;
-  avatar?: string;
-}
-
-export const getProposal = async (address: Address, proposalId: Hex) => {
+export const getProposal = async (
+  address: Address,
+  proposalId: Hex
+): Promise<Proposal | undefined> => {
   const governor = getContract({
     signerOrProvider: DefaultProvider,
     address,
@@ -74,10 +56,19 @@ export const getProposal = async (address: Address, proposalId: Hex) => {
   );
   const logs = await governor.queryFilter(filter);
 
-  return logs.map((x) => x.args).find((x: any) => x.proposalId === proposalId);
+  const data = logs
+    .map((x) => x.args)
+    .find((x: any) => x.proposalId === proposalId);
+
+  return data
+    ? { proposalId: data.proposalId, description: data.description }
+    : undefined;
 };
 
-export const getProposalVotes = async (address: Address, proposalId: Hex) => {
+export const getProposalVotes = async (
+  address: Address,
+  proposalId: Hex
+): Promise<Vote[]> => {
   const governor = getContract({
     signerOrProvider: DefaultProvider,
     address,
@@ -94,9 +85,10 @@ export const getProposalVotes = async (address: Address, proposalId: Hex) => {
         const name = await getEnsName({ address: x.voter });
 
         return {
-          ...x,
+          voter: x.voter,
+          proposalId: x.proposalId,
+          reason: x.reason,
           support: x.support.toString(),
-          weight: undefined,
           ens: name,
         };
       })
