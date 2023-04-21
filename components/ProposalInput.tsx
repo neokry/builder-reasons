@@ -10,8 +10,9 @@ export const ProposalInput = () => {
     const linkStart = "https://nouns.build/dao/";
     if (!propLink.startsWith(linkStart) || !propLink.includes("vote"))
       return {};
-    const propId = propLink.slice(-66);
-    const contract = propLink.replace(linkStart, "").slice(0, 42);
+    const cleanLink = propLink.split("?")[0];
+    const propId = cleanLink.slice(-66);
+    const contract = cleanLink.replace(linkStart, "").slice(0, 42);
     return { propId, contract };
   }, [propLink]);
 
